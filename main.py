@@ -625,11 +625,11 @@ elif page == "🔍 Explorador de Entidades":
     st.title("🔍 Explorador de Entidades")
     st.markdown("Busque y filtre todas las entidades reguladas")
     
-    # Filters
+    # Filters - First row
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        entity_type = st.selectbox("Tipo de Entidad", ["Todas"] + list(df['tipo_entidad'].unique()))
+        entity_type = st.selectbox("Tipo de Entidad", ["Todas", "SAV", "EAF"])
     
     with col2:
         province = st.selectbox("Provincia", ["Todas"] + sorted(df['direccion_provincia'].dropna().unique()))
@@ -646,12 +646,43 @@ elif page == "🔍 Explorador de Entidades":
     with col4:
         intl_presence = st.selectbox("Presencia Internacional", ["Todas", "Sí", "No"])
     
+    # Second row of filters - Instruments
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        # Create instrument filter options
+        instrument_options = {
+            'Todos': None,
+            'a - Valores negociables': 'a',
+            'b - Mercado monetario': 'b',
+            'c - Fondos inversión': 'c',
+            'd - Derivados valores': 'd',
+            'e - Derivados mat. primas (efectivo)': 'e',
+            'f - Derivados mat. primas (físico)': 'f',
+            'g - Otros derivados': 'g',
+            'h - Derivados crédito': 'h',
+            'i - CFDs': 'i',
+            'j - Derivados clima': 'j',
+            'k - Derechos emisión': 'k'
+        }
+        instrument_filter = st.selectbox("Filtrar por Instrumento", list(instrument_options.keys()))
+    
+    with col2:
+        # Number of instruments range
+        num_instruments_range = st.slider(
+            "Número de Instrumentos",
+            min_value=0,
+            max_value=int(df['num_instrumentos'].max()),
+            value=(0, int(df['num_instrumentos'].max()))
+        )
+    
     # Search box
     search_term = st.text_input("🔎 Buscar por nombre de entidad", placeholder="Ingrese el nombre de la entidad...")
     
     # Apply filters
     filtered_df = df.copy()
     
+    # Fix entity type filter
     if entity_type != "Todas":
         filtered_df = filtered_df[filtered_df['tipo_entidad'] == entity_type]
     
@@ -667,6 +698,17 @@ elif page == "🔍 Explorador de Entidades":
         filtered_df = filtered_df[filtered_df['has_international_presence'] == True]
     elif intl_presence == "No":
         filtered_df = filtered_df[filtered_df['has_international_presence'] == False]
+    
+    # Apply instrument filter
+    if instrument_filter != 'Todos':
+        selected_instrument = instrument_options[instrument_filter]
+        filtered_df = filtered_df[filtered_df['instrumentos_activos'].str.contains(selected_instrument, na=False)]
+    
+    # Apply number of instruments filter
+    filtered_df = filtered_df[
+        (filtered_df['num_instrumentos'] >= num_instruments_range[0]) &
+        (filtered_df['num_instrumentos'] <= num_instruments_range[1])
+    ]
     
     if search_term:
         filtered_df = filtered_df[filtered_df['nombre'].str.contains(search_term, case=False, na=False)]
