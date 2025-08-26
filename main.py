@@ -885,14 +885,6 @@ elif page == "📊 Análisis Comparativo":
                 y='Capital Social',
                 title="Comparación de Capital Social",
                 color='Entidad',
-                color_discrete_sequence=colors
-            )
-            fig_capital = px.bar(
-                metrics_df,
-                x='Entidad',
-                y='Capital Social',
-                title="Comparación de Capital Social",
-                color='Entidad',
                 color_discrete_sequence=['#60A5FA', '#34D399', '#FBBF24', '#F87171']
             )
             fig_capital.update_layout(
