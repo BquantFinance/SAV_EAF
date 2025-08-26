@@ -1628,64 +1628,6 @@ elif page == "💰 Salud Financiera":
         max_capital = df['capital_social_numeric'].max()
         st.metric("Capital Máximo", f"€{max_capital/1e6:.2f}M")
     
-    # Capital distribution
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        # Log scale distribution
-        fig_dist = px.histogram(
-            df,
-            x='capital_social_numeric',
-            title="Distribución de Capital Social (Escala Log)",
-            labels={'capital_social_numeric': 'Capital Social (€)', 'count': 'Número de Entidades'},
-            color='tipo_entidad',
-            color_discrete_map={'SAV': '#60A5FA', 'EAF': '#34D399'},
-            marginal="box",
-            log_x=True,
-            nbins=50
-        )
-        fig_dist.update_layout(
-            height=500,
-            paper_bgcolor='#1E293B',
-            plot_bgcolor='#0F172A',
-            font=dict(color='#F1F5F9', size=12),
-            title_font=dict(size=16, color='#F1F5F9'),
-            xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
-            yaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
-            legend=dict(
-                font=dict(color='#CBD5E1'),
-                bgcolor='#1E293B',
-                bordercolor='#334155',
-                borderwidth=1
-            )
-        )
-        st.plotly_chart(fig_dist, use_container_width=True)
-    
-    with col2:
-        # Violin plot by entity type
-        fig_violin = px.violin(
-            df,
-            y='capital_social_numeric',
-            x='tipo_entidad',
-            title="Distribución de Capital por Tipo de Entidad",
-            labels={'capital_social_numeric': 'Capital Social (€)', 'tipo_entidad': 'Tipo de Entidad'},
-            color='tipo_entidad',
-            color_discrete_map={'SAV': '#60A5FA', 'EAF': '#34D399'},
-            box=True,
-            log_y=True
-        )
-        fig_violin.update_layout(
-            height=500,
-            showlegend=False,
-            paper_bgcolor='#1E293B',
-            plot_bgcolor='#0F172A',
-            font=dict(color='#F1F5F9', size=12),
-            title_font=dict(size=16, color='#F1F5F9'),
-            xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
-            yaxis=dict(gridcolor='#334155', zerolinecolor='#334155')
-        )
-        st.plotly_chart(fig_violin, use_container_width=True)
-    
     # Top entities by capital
     st.markdown("### 📊 Ranking de Entidades por Capital Social")
     
