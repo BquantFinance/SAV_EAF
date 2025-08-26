@@ -15,155 +15,317 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for better aesthetics - Light Theme
+# Custom CSS for better aesthetics - Professional Dark Theme
 st.markdown("""
 <style>
-    /* Main color theme - Light and Modern */
+    /* Main color theme - Sophisticated Dark */
     :root {
-        --primary-color: #3B82F6;
-        --secondary-color: #F59E0B;
-        --success-color: #10B981;
-        --danger-color: #EF4444;
-        --neutral-color: #6B7280;
-        --background-light: #FFFFFF;
-        --card-background: #F9FAFB;
-        --border-color: #E5E7EB;
+        --primary-color: #60A5FA;  /* Light blue */
+        --secondary-color: #34D399;  /* Emerald green */
+        --accent-color: #FBBF24;  /* Amber */
+        --danger-color: #F87171;  /* Light red */
+        --background-dark: #0F172A;  /* Deep navy */
+        --background-card: #1E293B;  /* Slate 800 */
+        --background-hover: #334155;  /* Slate 700 */
+        --border-color: #334155;  /* Slate 700 */
+        --text-primary: #F1F5F9;  /* Slate 100 */
+        --text-secondary: #CBD5E1;  /* Slate 300 */
+        --text-muted: #94A3B8;  /* Slate 400 */
     }
     
-    /* Custom metric cards */
+    /* Main app background */
+    .stApp {
+        background-color: #0F172A;
+    }
+    
+    /* All text should be light */
+    .stMarkdown, .stText {
+        color: #F1F5F9 !important;
+    }
+    
+    /* Custom metric cards - Dark with good contrast */
     div[data-testid="metric-container"] {
-        background: white;
-        border: 1px solid #E5E7EB;
+        background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+        border: 1px solid #475569;
         padding: 20px;
         border-radius: 12px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         transition: all 0.3s ease;
     }
     
     div[data-testid="metric-container"]:hover {
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-        border-color: #3B82F6;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.4);
+        border-color: #60A5FA;
     }
     
     div[data-testid="metric-container"] label {
-        color: #6B7280 !important;
-        font-weight: 500 !important;
-        font-size: 14px !important;
+        color: #94A3B8 !important;
+        font-weight: 600 !important;
+        font-size: 13px !important;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
     
     div[data-testid="metric-container"] > div > div {
-        color: #1F2937 !important;
-        font-weight: 600 !important;
+        color: #F1F5F9 !important;
+        font-weight: 700 !important;
+        font-size: 1.5rem !important;
     }
     
-    /* Headers */
+    /* Green delta for positive metrics */
+    [data-testid="stMetricDelta"] {
+        color: #34D399 !important;
+    }
+    
+    [data-testid="stMetricDelta"] svg {
+        fill: #34D399;
+    }
+    
+    /* Headers - Bright and clear */
     h1 {
-        color: #1F2937 !important;
+        color: #F8FAFC !important;
         font-weight: 700 !important;
+        font-size: 2.25rem !important;
         margin-bottom: 1rem !important;
     }
     
-    h2, h3 {
-        color: #374151 !important;
+    h2 {
+        color: #F1F5F9 !important;
         font-weight: 600 !important;
+        font-size: 1.75rem !important;
+        margin-top: 2rem !important;
+        border-bottom: 2px solid #334155;
+        padding-bottom: 0.5rem;
     }
     
-    /* Sidebar styling */
+    h3 {
+        color: #E2E8F0 !important;
+        font-weight: 600 !important;
+        font-size: 1.25rem !important;
+        margin-top: 1.5rem !important;
+    }
+    
+    h4 {
+        color: #CBD5E1 !important;
+        font-weight: 500 !important;
+    }
+    
+    /* Sidebar styling - Dark gradient */
     section[data-testid="stSidebar"] {
-        background-color: #F9FAFB;
-        border-right: 1px solid #E5E7EB;
+        background: linear-gradient(180deg, #1E293B 0%, #0F172A 100%);
+        border-right: 1px solid #334155;
+    }
+    
+    section[data-testid="stSidebar"] .stMarkdown {
+        color: #CBD5E1 !important;
+    }
+    
+    section[data-testid="stSidebar"] h1, 
+    section[data-testid="stSidebar"] h2, 
+    section[data-testid="stSidebar"] h3 {
+        color: #F1F5F9 !important;
     }
     
     /* Main content area */
     .main {
-        background-color: #FFFFFF;
+        background-color: #0F172A;
+        color: #F1F5F9;
     }
     
     /* Dataframe styling */
     .dataframe {
+        background: #1E293B !important;
+        color: #F1F5F9 !important;
         font-size: 13px;
-        border: 1px solid #E5E7EB !important;
+        border: 1px solid #334155 !important;
     }
     
-    /* Button styling */
+    .dataframe thead {
+        background-color: #334155 !important;
+        color: #F1F5F9 !important;
+    }
+    
+    .dataframe tbody tr:hover {
+        background-color: #334155 !important;
+    }
+    
+    /* Button styling - Bright blue */
     .stButton > button {
-        background: #3B82F6;
+        background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
         color: white;
         border: none;
         padding: 10px 24px;
         border-radius: 8px;
-        font-weight: 500;
+        font-weight: 600;
+        font-size: 14px;
         transition: all 0.3s ease;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
     }
     
     .stButton > button:hover {
-        background: #2563EB;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(59, 130, 246, 0.4);
+        background: linear-gradient(135deg, #60A5FA 0%, #93C5FD 100%);
     }
     
     /* Tab styling */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
-        background-color: #F9FAFB;
+        background-color: #1E293B;
         padding: 4px;
-        border-radius: 12px;
+        border-radius: 8px;
+        border: 1px solid #334155;
     }
     
     .stTabs [data-baseweb="tab"] {
-        height: 42px;
-        padding-left: 20px;
-        padding-right: 20px;
+        height: 40px;
         background-color: transparent;
-        border-radius: 8px;
-        color: #6B7280;
+        border-radius: 6px;
+        color: #94A3B8;
         font-weight: 500;
+        font-size: 14px;
+    }
+    
+    .stTabs [data-baseweb="tab"]:hover {
+        color: #CBD5E1;
+        background-color: #334155;
     }
     
     .stTabs [aria-selected="true"] {
-        background: white;
-        color: #3B82F6;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+        color: white !important;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
     }
     
     /* Selectbox styling */
     .stSelectbox > div > div {
-        background-color: white;
-        border: 1px solid #E5E7EB;
+        background-color: #1E293B;
+        border: 1px solid #475569;
+        color: #F1F5F9;
+    }
+    
+    .stSelectbox > div > div:hover {
+        border-color: #60A5FA;
+    }
+    
+    .stSelectbox label {
+        color: #CBD5E1 !important;
     }
     
     /* Text input styling */
     .stTextInput > div > div {
-        background-color: white;
-        border: 1px solid #E5E7EB;
+        background-color: #1E293B;
+        border: 1px solid #475569;
+        color: #F1F5F9;
+    }
+    
+    .stTextInput > div > div:focus-within {
+        border-color: #60A5FA;
+        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+    }
+    
+    .stTextInput label {
+        color: #CBD5E1 !important;
     }
     
     /* Expander styling */
     .streamlit-expanderHeader {
-        background-color: #F9FAFB;
-        border: 1px solid #E5E7EB;
+        background-color: #1E293B;
+        border: 1px solid #334155;
         border-radius: 8px;
         font-weight: 500;
+        color: #E2E8F0 !important;
+        padding: 12px;
     }
     
-    /* Plotly chart backgrounds */
+    .streamlit-expanderHeader:hover {
+        background-color: #334155;
+        border-color: #60A5FA;
+    }
+    
+    .streamlit-expanderContent {
+        background-color: #1E293B;
+        border: 1px solid #334155;
+        border-top: none;
+        color: #F1F5F9;
+    }
+    
+    /* Info boxes */
+    .stAlert {
+        background-color: #1E3A8A;
+        border: 1px solid #3B82F6;
+        border-radius: 8px;
+        color: #DBEAFE;
+    }
+    
+    /* Download button */
+    .stDownloadButton > button {
+        background: linear-gradient(135deg, #059669 0%, #34D399 100%);
+        color: white;
+        box-shadow: 0 4px 6px rgba(52, 211, 153, 0.3);
+    }
+    
+    .stDownloadButton > button:hover {
+        background: linear-gradient(135deg, #34D399 0%, #6EE7B7 100%);
+        box-shadow: 0 6px 12px rgba(52, 211, 153, 0.4);
+    }
+    
+    /* Radio buttons */
+    [data-testid="stRadio"] label {
+        color: #CBD5E1 !important;
+    }
+    
+    /* Slider */
+    .stSlider > div > div > div {
+        background-color: #60A5FA;
+    }
+    
+    .stSlider label {
+        color: #CBD5E1 !important;
+    }
+    
+    /* Multiselect */
+    .stMultiSelect > div {
+        background-color: #1E293B;
+        border: 1px solid #475569;
+        color: #F1F5F9;
+    }
+    
+    .stMultiSelect label {
+        color: #CBD5E1 !important;
+    }
+    
+    /* Plotly charts - ensure they're readable */
     .js-plotly-plot {
-        background-color: white !important;
+        background-color: transparent !important;
     }
     
-    /* Delta color for metrics */
-    [data-testid="stMetricDelta"] {
-        color: #10B981 !important;
+    /* Column gaps */
+    [data-testid="column"] {
+        padding: 0 0.5rem;
     }
     
-    /* Footer styling */
-    .footer {
-        margin-top: 2rem;
-        padding: 2rem;
-        background: #F9FAFB;
-        border-top: 1px solid #E5E7EB;
-        text-align: center;
+    /* Make all p tags light */
+    p {
+        color: #E2E8F0;
+    }
+    
+    /* Ensure code blocks are visible */
+    code {
+        background-color: #334155;
+        color: #60A5FA;
+        padding: 2px 4px;
+        border-radius: 4px;
+    }
+    
+    /* Make sure all text in markdown is visible */
+    .markdown-text-container {
+        color: #F1F5F9 !important;
+    }
+    
+    /* Footer text */
+    div[data-testid="stMarkdownContainer"] p {
+        color: #CBD5E1 !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -295,11 +457,23 @@ if page == "🏠 Vista General":
             values=df['tipo_entidad'].value_counts().values,
             names=df['tipo_entidad'].value_counts().index,
             title="Distribución por Tipo de Entidad",
-            color_discrete_map={'SAV': '#3B82F6', 'EAF': '#10B981'},
+            color_discrete_map={'SAV': '#60A5FA', 'EAF': '#34D399'},
             hole=0.4
         )
-        fig_pie.update_traces(textposition='inside', textinfo='percent+label')
-        fig_pie.update_layout(height=400, paper_bgcolor='white', plot_bgcolor='white')
+        fig_pie.update_traces(
+            textposition='inside',
+            textinfo='percent+label',
+            textfont=dict(size=14, color='white')
+        )
+        fig_pie.update_layout(
+            height=400,
+            paper_bgcolor='#1E293B',
+            plot_bgcolor='#1E293B',
+            font=dict(color='#F1F5F9', size=12),
+            title_font=dict(size=16, color='#F1F5F9'),
+            showlegend=True,
+            legend=dict(font=dict(color='#CBD5E1'))
+        )
         st.plotly_chart(fig_pie, use_container_width=True)
     
     with col2:
@@ -312,9 +486,22 @@ if page == "🏠 Vista General":
             title="Top 10 Provincias por Número de Entidades",
             labels={'x': 'Número de Entidades', 'y': 'Provincia'},
             color=province_counts.values,
-            color_continuous_scale='Blues'
+            color_continuous_scale=[[0, '#1E293B'], [0.5, '#60A5FA'], [1, '#93C5FD']]
         )
-        fig_bar.update_layout(height=400, showlegend=False, paper_bgcolor='white', plot_bgcolor='white')
+        fig_bar.update_layout(
+            height=400,
+            showlegend=False,
+            paper_bgcolor='#1E293B',
+            plot_bgcolor='#0F172A',
+            font=dict(color='#F1F5F9', size=12),
+            title_font=dict(size=16, color='#F1F5F9'),
+            xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            yaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            coloraxis_colorbar=dict(
+                title_font_color='#CBD5E1',
+                tickfont_color='#CBD5E1'
+            )
+        )
         st.plotly_chart(fig_bar, use_container_width=True)
     
     # Charts row 2
@@ -329,10 +516,19 @@ if page == "🏠 Vista General":
             title="Distribución de Capital Social por Tipo de Entidad",
             labels={'capital_social_numeric': 'Capital Social (€)', 'tipo_entidad': 'Tipo de Entidad'},
             color='tipo_entidad',
-            color_discrete_map={'SAV': '#3B82F6', 'EAF': '#10B981'},
+            color_discrete_map={'SAV': '#60A5FA', 'EAF': '#34D399'},
             log_y=True
         )
-        fig_box.update_layout(height=400, showlegend=False, paper_bgcolor='white', plot_bgcolor='white')
+        fig_box.update_layout(
+            height=400,
+            showlegend=False,
+            paper_bgcolor='#1E293B',
+            plot_bgcolor='#0F172A',
+            font=dict(color='#F1F5F9', size=12),
+            title_font=dict(size=16, color='#F1F5F9'),
+            xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            yaxis=dict(gridcolor='#334155', zerolinecolor='#334155')
+        )
         st.plotly_chart(fig_box, use_container_width=True)
     
     with col2:
@@ -342,10 +538,10 @@ if page == "🏠 Vista General":
             z=services_data.values,
             x=['Servicios de Inversión', 'Servicios Auxiliares'],
             y=services_data.index,
-            colorscale='Blues',
+            colorscale=[[0, '#0F172A'], [0.5, '#60A5FA'], [1, '#93C5FD']],
             text=services_data.values.round(2),
             texttemplate='%{text}',
-            textfont={"size": 14},
+            textfont={"size": 14, "color": "white"},
             hoverongaps=False
         ))
         fig_heat.update_layout(
@@ -353,8 +549,12 @@ if page == "🏠 Vista General":
             height=400,
             xaxis_title="Tipo de Servicio",
             yaxis_title="Tipo de Entidad",
-            paper_bgcolor='white',
-            plot_bgcolor='white'
+            paper_bgcolor='#1E293B',
+            plot_bgcolor='#0F172A',
+            font=dict(color='#F1F5F9', size=12),
+            title_font=dict(size=16, color='#F1F5F9'),
+            xaxis=dict(gridcolor='#334155'),
+            yaxis=dict(gridcolor='#334155')
         )
         st.plotly_chart(fig_heat, use_container_width=True)
     
@@ -371,9 +571,23 @@ if page == "🏠 Vista General":
         color='tipo_entidad',
         title="Registros de Entidades a lo Largo del Tiempo",
         labels={'count': 'Número de Registros', 'year': 'Año'},
-        color_discrete_map={'SAV': '#3B82F6', 'EAF': '#10B981'}
+        color_discrete_map={'SAV': '#60A5FA', 'EAF': '#34D399'}
     )
-    fig_timeline.update_layout(height=300, paper_bgcolor='white', plot_bgcolor='white')
+    fig_timeline.update_layout(
+        height=300,
+        paper_bgcolor='#1E293B',
+        plot_bgcolor='#0F172A',
+        font=dict(color='#F1F5F9', size=12),
+        title_font=dict(size=16, color='#F1F5F9'),
+        xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+        yaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+        legend=dict(
+            font=dict(color='#CBD5E1'),
+            bgcolor='#1E293B',
+            bordercolor='#334155',
+            borderwidth=1
+        )
+    )
     st.plotly_chart(fig_timeline, use_container_width=True)
 
 # Page: Entity Explorer
@@ -515,7 +729,7 @@ elif page == "📊 Análisis Comparativo":
         
         fig = go.Figure()
         
-        colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444']
+        colors = ['#60A5FA', '#34D399', '#FBBF24', '#F87171']
         
         for idx, entity_name in enumerate(metrics_df['Entidad']):
             entity_data = metrics_df[metrics_df['Entidad'] == entity_name]
@@ -541,13 +755,25 @@ elif page == "📊 Análisis Comparativo":
             polar=dict(
                 radialaxis=dict(
                     visible=True,
-                    range=[0, 100]
-                )),
+                    range=[0, 100],
+                    gridcolor='#334155',
+                    linecolor='#334155'
+                ),
+                bgcolor='#0F172A'
+            ),
             showlegend=True,
             title="Comparación de Servicios e Instrumentos",
             height=500,
-            paper_bgcolor='white',
-            plot_bgcolor='white'
+            paper_bgcolor='#1E293B',
+            plot_bgcolor='#0F172A',
+            font=dict(color='#F1F5F9', size=12),
+            title_font=dict(size=16, color='#F1F5F9'),
+            legend=dict(
+                font=dict(color='#CBD5E1'),
+                bgcolor='#1E293B',
+                bordercolor='#334155',
+                borderwidth=1
+            )
         )
         
         st.plotly_chart(fig, use_container_width=True)
@@ -564,7 +790,24 @@ elif page == "📊 Análisis Comparativo":
                 color='Entidad',
                 color_discrete_sequence=colors
             )
-            fig_capital.update_layout(showlegend=False, height=400, paper_bgcolor='white', plot_bgcolor='white')
+            fig_capital = px.bar(
+                metrics_df,
+                x='Entidad',
+                y='Capital Social',
+                title="Comparación de Capital Social",
+                color='Entidad',
+                color_discrete_sequence=['#60A5FA', '#34D399', '#FBBF24', '#F87171']
+            )
+            fig_capital.update_layout(
+                showlegend=False,
+                height=400,
+                paper_bgcolor='#1E293B',
+                plot_bgcolor='#0F172A',
+                font=dict(color='#F1F5F9', size=12),
+                title_font=dict(size=16, color='#F1F5F9'),
+                xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+                yaxis=dict(gridcolor='#334155', zerolinecolor='#334155')
+            )
             st.plotly_chart(fig_capital, use_container_width=True)
         
         with col2:
@@ -582,19 +825,37 @@ elif page == "📊 Análisis Comparativo":
                 color='Tipo de Servicio',
                 title="Comparación de Servicios",
                 barmode='group',
-                color_discrete_map={'Servicios de Inversión': '#3B82F6', 'Servicios Auxiliares': '#10B981'}
+                color_discrete_map={'Servicios de Inversión': '#60A5FA', 'Servicios Auxiliares': '#34D399'}
             )
-            fig_services.update_layout(height=400, paper_bgcolor='white', plot_bgcolor='white')
+            fig_services.update_layout(
+                height=400,
+                paper_bgcolor='#1E293B',
+                plot_bgcolor='#0F172A',
+                font=dict(color='#F1F5F9', size=12),
+                title_font=dict(size=16, color='#F1F5F9'),
+                xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+                yaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+                legend=dict(
+                    font=dict(color='#CBD5E1'),
+                    bgcolor='#1E293B',
+                    bordercolor='#334155',
+                    borderwidth=1
+                )
+            )
             st.plotly_chart(fig_services, use_container_width=True)
         
         # Detailed comparison table with better formatting
         st.markdown("### Comparación Detallada")
         
         # Add explanation
-        st.info("""
-        💡 **Tip:** Los servicios e instrumentos son directamente comparables entre entidades gracias a la 
-        estandarización regulatoria (MiFID II y RD 814/2023).
-        """)
+        st.markdown("""
+        <div style='background: linear-gradient(135deg, #1E3A8A 0%, #1E293B 100%); border: 1px solid #3B82F6; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;'>
+            <p style='color: #DBEAFE; margin: 0;'>
+            <strong style='color: #93C5FD;'>💡 Tip:</strong> Los servicios e instrumentos son directamente comparables entre entidades gracias a la 
+            estandarización regulatoria (MiFID II y RD 814/2023).
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
         
         comparison_fields = ['nombre', 'tipo_entidad', 'capital_social', 'direccion_provincia',
                             'num_servicios_inversion', 'num_servicios_auxiliares', 'num_instrumentos',
@@ -715,10 +976,14 @@ elif page == "💼 Análisis de Servicios":
     st.markdown("Análisis profundo de servicios de inversión y auxiliares")
     
     # Explanation of comparability
-    st.info("""
-    ℹ️ **Nota sobre la comparabilidad:** Todos los servicios están estandarizados según la normativa MiFID II y el RD 814/2023, 
-    lo que permite comparaciones objetivas entre todas las entidades reguladas, independientemente de su tipo (SAV o EAF).
-    """)
+    st.markdown("""
+    <div style='background: linear-gradient(135deg, #1E3A8A 0%, #1E293B 100%); border: 1px solid #3B82F6; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;'>
+        <p style='color: #DBEAFE; margin: 0;'>
+        <strong style='color: #93C5FD;'>ℹ️ Nota sobre la comparabilidad:</strong> Todos los servicios están estandarizados según la normativa MiFID II y el RD 814/2023, 
+        lo que permite comparaciones objetivas entre todas las entidades reguladas, independientemente de su tipo (SAV o EAF).
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Overall service statistics
     col1, col2, col3, col4 = st.columns(4)
@@ -778,10 +1043,19 @@ elif page == "💼 Análisis de Servicios":
             x='num_servicios_inversion',
             title="Distribución de Servicios de Inversión",
             labels={'num_servicios_inversion': 'Número de Servicios de Inversión', 'count': 'Número de Entidades'},
-            color_discrete_sequence=['#3B82F6'],
+            color_discrete_sequence=['#60A5FA'],
             nbins=15
         )
-        fig_inv.update_layout(height=400, paper_bgcolor='white', plot_bgcolor='white')
+        fig_inv.update_layout(
+            height=400,
+            paper_bgcolor='#1E293B',
+            plot_bgcolor='#0F172A',
+            font=dict(color='#F1F5F9', size=12),
+            title_font=dict(size=16, color='#F1F5F9'),
+            xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            yaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            bargap=0.1
+        )
         st.plotly_chart(fig_inv, use_container_width=True)
     
     with col2:
@@ -791,10 +1065,19 @@ elif page == "💼 Análisis de Servicios":
             x='num_servicios_auxiliares',
             title="Distribución de Servicios Auxiliares",
             labels={'num_servicios_auxiliares': 'Número de Servicios Auxiliares', 'count': 'Número de Entidades'},
-            color_discrete_sequence=['#10B981'],
+            color_discrete_sequence=['#34D399'],
             nbins=15
         )
-        fig_aux.update_layout(height=400, paper_bgcolor='white', plot_bgcolor='white')
+        fig_aux.update_layout(
+            height=400,
+            paper_bgcolor='#1E293B',
+            plot_bgcolor='#0F172A',
+            font=dict(color='#F1F5F9', size=12),
+            title_font=dict(size=16, color='#F1F5F9'),
+            xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            yaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            bargap=0.1
+        )
         st.plotly_chart(fig_aux, use_container_width=True)
     
     # Services comparison framework
@@ -872,7 +1155,15 @@ elif page == "💼 Análisis de Servicios":
         aspect="auto",
         text_auto='.2f'
     )
-    fig_corr.update_layout(height=500, paper_bgcolor='white', plot_bgcolor='white')
+    fig_corr.update_layout(
+        height=500,
+        paper_bgcolor='#1E293B',
+        plot_bgcolor='#0F172A',
+        font=dict(color='#F1F5F9', size=12),
+        title_font=dict(size=16, color='#F1F5F9'),
+        xaxis=dict(gridcolor='#334155'),
+        yaxis=dict(gridcolor='#334155')
+    )
     st.plotly_chart(fig_corr, use_container_width=True)
     
     # Instruments analysis with definitions
@@ -909,10 +1200,21 @@ elif page == "💼 Análisis de Servicios":
             names=instrument_dist.index,
             title="Categorías de Cobertura de Instrumentos",
             hole=0.4,
-            color_discrete_sequence=['#3B82F6', '#60A5FA', '#93C5FD', '#DBEAFE']
+            color_discrete_sequence=['#60A5FA', '#34D399', '#FBBF24', '#F87171']
         )
-        fig_inst.update_traces(textposition='inside', textinfo='percent+label')
-        fig_inst.update_layout(height=400, paper_bgcolor='white', plot_bgcolor='white')
+        fig_inst.update_traces(
+            textposition='inside',
+            textinfo='percent+label',
+            textfont=dict(size=12, color='white')
+        )
+        fig_inst.update_layout(
+            height=400,
+            paper_bgcolor='#1E293B',
+            plot_bgcolor='#1E293B',
+            font=dict(color='#F1F5F9', size=12),
+            title_font=dict(size=16, color='#F1F5F9'),
+            legend=dict(font=dict(color='#CBD5E1'))
+        )
         st.plotly_chart(fig_inst, use_container_width=True)
     
     with col2:
@@ -1067,12 +1369,26 @@ elif page == "💰 Salud Financiera":
             title="Distribución de Capital Social (Escala Log)",
             labels={'capital_social_numeric': 'Capital Social (€)', 'count': 'Número de Entidades'},
             color='tipo_entidad',
-            color_discrete_map={'SAV': '#3B82F6', 'EAF': '#10B981'},
+            color_discrete_map={'SAV': '#60A5FA', 'EAF': '#34D399'},
             marginal="box",
             log_x=True,
             nbins=50
         )
-        fig_dist.update_layout(height=500, paper_bgcolor='white', plot_bgcolor='white')
+        fig_dist.update_layout(
+            height=500,
+            paper_bgcolor='#1E293B',
+            plot_bgcolor='#0F172A',
+            font=dict(color='#F1F5F9', size=12),
+            title_font=dict(size=16, color='#F1F5F9'),
+            xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            yaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            legend=dict(
+                font=dict(color='#CBD5E1'),
+                bgcolor='#1E293B',
+                bordercolor='#334155',
+                borderwidth=1
+            )
+        )
         st.plotly_chart(fig_dist, use_container_width=True)
     
     with col2:
@@ -1084,11 +1400,20 @@ elif page == "💰 Salud Financiera":
             title="Distribución de Capital por Tipo de Entidad",
             labels={'capital_social_numeric': 'Capital Social (€)', 'tipo_entidad': 'Tipo de Entidad'},
             color='tipo_entidad',
-            color_discrete_map={'SAV': '#3B82F6', 'EAF': '#10B981'},
+            color_discrete_map={'SAV': '#60A5FA', 'EAF': '#34D399'},
             box=True,
             log_y=True
         )
-        fig_violin.update_layout(height=500, showlegend=False, paper_bgcolor='white', plot_bgcolor='white')
+        fig_violin.update_layout(
+            height=500,
+            showlegend=False,
+            paper_bgcolor='#1E293B',
+            plot_bgcolor='#0F172A',
+            font=dict(color='#F1F5F9', size=12),
+            title_font=dict(size=16, color='#F1F5F9'),
+            xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            yaxis=dict(gridcolor='#334155', zerolinecolor='#334155')
+        )
         st.plotly_chart(fig_violin, use_container_width=True)
     
     # Top entities by capital
@@ -1106,18 +1431,27 @@ elif page == "💰 Salud Financiera":
         title="Top 20 Entidades por Capital Social",
         labels={'capital_social_numeric': 'Capital Social (€)', 'nombre': 'Entidad'},
         color='tipo_entidad',
-        color_discrete_map={'SAV': '#3B82F6', 'EAF': '#10B981'},
+        color_discrete_map={'SAV': '#60A5FA', 'EAF': '#34D399'},
         hover_data=['capital_social_numeric', 'direccion_provincia']
     )
     fig_top_capital.update_layout(
         height=600,
         xaxis_tickformat='€,.0f',
-        paper_bgcolor='white',
-        plot_bgcolor='white',
+        paper_bgcolor='#1E293B',
+        plot_bgcolor='#0F172A',
+        font=dict(color='#F1F5F9', size=12),
+        title_font=dict(size=16, color='#F1F5F9'),
         showlegend=True,
-        yaxis={'categoryorder':'total ascending'}
+        yaxis={'categoryorder':'total ascending'},
+        xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+        legend=dict(
+            font=dict(color='#CBD5E1'),
+            bgcolor='#1E293B',
+            bordercolor='#334155',
+            borderwidth=1
+        )
     )
-    fig_top_capital.update_traces(texttemplate='€%{x:,.0f}', textposition='inside')
+    fig_top_capital.update_traces(texttemplate='€%{x:,.0f}', textposition='inside', textfont=dict(color='white'))
     st.plotly_chart(fig_top_capital, use_container_width=True)
     
     # Capital concentration metrics
@@ -1237,10 +1571,21 @@ elif page == "👥 Segmentación de Clientes":
             names=list(client_types.keys()),
             title="Distribución por Tipo de Cliente (Entidades que Atienden Cada Tipo)",
             hole=0.4,
-            color_discrete_sequence=['#3B82F6', '#10B981', '#F59E0B']
+            color_discrete_sequence=['#60A5FA', '#34D399', '#FBBF24']
         )
-        fig_pie.update_traces(textposition='inside', textinfo='percent+label')
-        fig_pie.update_layout(height=400, paper_bgcolor='white', plot_bgcolor='white')
+        fig_pie.update_traces(
+            textposition='inside',
+            textinfo='percent+label',
+            textfont=dict(size=12, color='white')
+        )
+        fig_pie.update_layout(
+            height=400,
+            paper_bgcolor='#1E293B',
+            plot_bgcolor='#1E293B',
+            font=dict(color='#F1F5F9', size=12),
+            title_font=dict(size=16, color='#F1F5F9'),
+            legend=dict(font=dict(color='#CBD5E1'))
+        )
         st.plotly_chart(fig_pie, use_container_width=True)
     
     with col2:
@@ -1262,12 +1607,18 @@ elif page == "👥 Segmentación de Clientes":
     st.markdown("### Oferta de Servicios por Tipo de Cliente")
     
     # Add explanation
-    st.info("""
-    💡 **Tipos de clientes según MiFID II:**
-    - **Minoristas:** Inversores particulares con mayor protección regulatoria
-    - **Profesionales:** Inversores con experiencia y conocimiento del mercado
-    - **Contrapartes Elegibles:** Instituciones financieras y grandes corporaciones
-    """)
+    st.markdown("""
+    <div style='background: linear-gradient(135deg, #1E3A8A 0%, #1E293B 100%); border: 1px solid #3B82F6; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;'>
+        <p style='color: #DBEAFE; margin: 0; margin-bottom: 0.5rem;'>
+        <strong style='color: #93C5FD;'>💡 Tipos de clientes según MiFID II:</strong>
+        </p>
+        <ul style='color: #DBEAFE; margin: 0; padding-left: 1.5rem;'>
+            <li><strong>Minoristas:</strong> Inversores particulares con mayor protección regulatoria</li>
+            <li><strong>Profesionales:</strong> Inversores con experiencia y conocimiento del mercado</li>
+            <li><strong>Contrapartes Elegibles:</strong> Instituciones financieras y grandes corporaciones</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Prepare data for analysis
     df['serves_retail'] = df['tipos_clientes'].str.contains('Minoristas', na=False)
@@ -1349,9 +1700,9 @@ elif page == "👥 Segmentación de Clientes":
     
     fig_box = go.Figure()
     
-    for segment, column, color in [('Minoristas', 'serves_retail', '#3B82F6'),
-                                   ('Profesionales', 'serves_professional', '#10B981'),
-                                   ('Contrapartes Elegibles', 'serves_eligible', '#F59E0B')]:
+    for segment, column, color in [('Minoristas', 'serves_retail', '#60A5FA'),
+                                   ('Profesionales', 'serves_professional', '#34D399'),
+                                   ('Contrapartes Elegibles', 'serves_eligible', '#FBBF24')]:
         segment_data = df[df[column] == True]['capital_social_numeric']
         fig_box.add_trace(go.Box(
             y=segment_data,
@@ -1364,8 +1715,18 @@ elif page == "👥 Segmentación de Clientes":
         yaxis_title="Capital Social (€)",
         yaxis_type="log",
         height=400,
-        paper_bgcolor='white',
-        plot_bgcolor='white'
+        paper_bgcolor='#1E293B',
+        plot_bgcolor='#0F172A',
+        font=dict(color='#F1F5F9', size=12),
+        title_font=dict(size=16, color='#F1F5F9'),
+        xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+        yaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+        legend=dict(
+            font=dict(color='#CBD5E1'),
+            bgcolor='#1E293B',
+            bordercolor='#334155',
+            borderwidth=1
+        )
     )
     st.plotly_chart(fig_box, use_container_width=True)
     
@@ -1396,10 +1757,10 @@ elif page == "👥 Segmentación de Clientes":
 st.markdown("---")
 st.markdown(
     """
-    <div style='text-align: center; padding: 2rem 0; color: #6B7280;'>
-        <p style='font-size: 16px; margin-bottom: 1rem;'>📊 Dashboard de Análisis de Sociedades y Agencias de Valores y Empresas de Asesoramiento Financiero</p>
-        <p style='color: #9CA3AF;'>Última Actualización: Agosto 2025</p>
-        <p style='margin-top: 1rem;'><strong>Desarrollado por <a href="https://twitter.com/Gsnchez" target="_blank" style="color: #3B82F6; text-decoration: none;">@Gsnchez</a> | <a href="https://bquantfinance.com" target="_blank" style="color: #3B82F6; text-decoration: none;">bquantfinance.com</a></strong></p>
+    <div style='text-align: center; padding: 2rem 0; color: #CBD5E1; background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); border-radius: 12px; margin-top: 2rem;'>
+        <p style='font-size: 16px; margin-bottom: 1rem; color: #E2E8F0;'>📊 Dashboard de Análisis de Sociedades y Agencias de Valores y Empresas de Asesoramiento Financiero</p>
+        <p style='color: #94A3B8;'>Última Actualización: Agosto 2025</p>
+        <p style='margin-top: 1rem;'><strong>Desarrollado por <a href="https://twitter.com/Gsnchez" target="_blank" style="color: #60A5FA; text-decoration: none;">@Gsnchez</a> | <a href="https://bquantfinance.com" target="_blank" style="color: #60A5FA; text-decoration: none;">bquantfinance.com</a></strong></p>
     </div>
     """,
     unsafe_allow_html=True
