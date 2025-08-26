@@ -682,18 +682,22 @@ elif page == "🔍 Explorador de Entidades":
     # Apply filters
     filtered_df = df.copy()
     
-    # Fix entity type filter
+    # Entity type filter
     if entity_type != "Todas":
         filtered_df = filtered_df[filtered_df['tipo_entidad'] == entity_type]
     
+    # Province filter
     if province != "Todas":
         filtered_df = filtered_df[filtered_df['direccion_provincia'] == province]
     
+    # Capital range filter - FIXED to handle NaN values (EAF entities have no capital data)
     filtered_df = filtered_df[
-        (filtered_df['capital_social_numeric'] >= capital_range[0]) &
-        (filtered_df['capital_social_numeric'] <= capital_range[1])
+        ((filtered_df['capital_social_numeric'] >= capital_range[0]) &
+         (filtered_df['capital_social_numeric'] <= capital_range[1])) |
+        (filtered_df['capital_social_numeric'].isna())  # Keep entities with no capital data
     ]
     
+    # International presence filter
     if intl_presence == "Sí":
         filtered_df = filtered_df[filtered_df['has_international_presence'] == True]
     elif intl_presence == "No":
@@ -710,6 +714,7 @@ elif page == "🔍 Explorador de Entidades":
         (filtered_df['num_instrumentos'] <= num_instruments_range[1])
     ]
     
+    # Search filter
     if search_term:
         filtered_df = filtered_df[filtered_df['nombre'].str.contains(search_term, case=False, na=False)]
     
@@ -733,19 +738,30 @@ elif page == "🔍 Explorador de Entidades":
         </div>
         """, unsafe_allow_html=True)
         
-        display_columns = ['nombre', 'tipo_entidad', 'numero_registro', 'direccion_provincia', 
-                          'capital_social', 'num_servicios_inversion', 'num_servicios_auxiliares',
-                          'num_instrumentos', 'instrumentos_activos', 'fogain']
+        # ALL COLUMNS - comprehensive view
+        display_columns = ['nombre', 'tipo_entidad', 'numero_registro', 'fecha_registro',
+                          'direccion_provincia', 'direccion_ciudad', 'direccion_calle',
+                          'capital_social', 'fogain',
+                          'num_servicios_inversion', 'num_servicios_auxiliares',
+                          'num_instrumentos', 'instrumentos_activos', 
+                          'tipos_clientes',
+                          'titular_nombre', 'titular_telefono', 'titular_email', 'titular_web',
+                          'atencion_direccion', 'atencion_localidad', 'atencion_provincia',
+                          'num_auditorias', 'ultimo_ejercicio_auditado', 'ultimo_auditor',
+                          'num_socios', 'num_administradores', 'num_agentes',
+                          'num_sucursales_espana', 'num_sucursales_eee', 'num_libre_prestacion_eee',
+                          'tiene_limitaciones', 'tiene_reglamento']
+        
+        # Filter to only include columns that exist in the dataframe
+        display_columns = [col for col in display_columns if col in filtered_df.columns]
         
         st.dataframe(
-            filtered_df[display_columns].style.format({
-                'capital_social': '€{}'
-            }),
+            filtered_df[display_columns],
             use_container_width=True,
             height=600
         )
     else:
-        # Cards view
+        # Cards view - enhanced with more information
         st.markdown("""
         <div style='background: #1E293B; padding: 0.5rem; border-radius: 6px; margin-bottom: 1rem;'>
             <span style='color: #FBBF24; font-weight: bold;'>📌 Códigos de Instrumentos:</span>
@@ -765,12 +781,20 @@ elif page == "🔍 Explorador de Entidades":
                     st.markdown(f"**Nº Registro:** {row['numero_registro']}")
                     st.markdown(f"**Fecha Registro:** {row['fecha_registro']}")
                     st.markdown(f"**FOGAIN:** {row['fogain']}")
+                    if pd.notna(row.get('titular_nombre')):
+                        st.markdown(f"**Contacto:** {row['titular_nombre']}")
+                    if pd.notna(row.get('titular_telefono')):
+                        st.markdown(f"**Teléfono:** {row['titular_telefono']}")
                 
                 with col2:
-                    st.markdown(f"**Capital Social:** €{row['capital_social']}")
+                    st.markdown(f"**Capital Social:** €{row['capital_social'] if pd.notna(row['capital_social']) else 'N/D'}")
                     st.markdown(f"**Provincia:** {row['direccion_provincia']}")
                     st.markdown(f"**Servicios Inversión:** {row['num_servicios_inversion']}")
                     st.markdown(f"**Servicios Auxiliares:** {row['num_servicios_auxiliares']}")
+                    if pd.notna(row.get('titular_email')):
+                        st.markdown(f"**Email:** {row['titular_email']}")
+                    if pd.notna(row.get('titular_web')):
+                        st.markdown(f"**Web:** {row['titular_web']}")
                 
                 with col3:
                     st.markdown(f"**Total Instrumentos:** {row['num_instrumentos']}")
@@ -779,6 +803,12 @@ elif page == "🔍 Explorador de Entidades":
                         st.markdown(f"<code style='background: #0F172A; color: #60A5FA; padding: 2px 4px; border-radius: 4px;'>{row['instrumentos_activos']}</code>", unsafe_allow_html=True)
                     else:
                         st.markdown("*No especificado*")
+                    if pd.notna(row.get('num_auditorias')):
+                        st.markdown(f"**Auditorías:** {int(row['num_auditorias'])}")
+                    if pd.notna(row.get('ultimo_ejercicio_auditado')):
+                        st.markdown(f"**Última Auditoría:** {int(row['ultimo_ejercicio_auditado'])}")
+                    if pd.notna(row.get('tipos_clientes')):
+                        st.markdown(f"**Tipos Clientes:** {row['tipos_clientes']}")
     
     # Export functionality
     if st.button("📥 Exportar Datos Filtrados"):
