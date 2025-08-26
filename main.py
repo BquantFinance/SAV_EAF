@@ -621,6 +621,7 @@ if page == "🏠 Vista General":
     st.plotly_chart(fig_timeline, use_container_width=True)
 
 # Page: Entity Explorer
+# Page: Entity Explorer
 elif page == "🔍 Explorador de Entidades":
     st.title("🔍 Explorador de Entidades")
     st.markdown("Busque y filtre todas las entidades reguladas")
@@ -632,7 +633,7 @@ elif page == "🔍 Explorador de Entidades":
         entity_type = st.selectbox("Tipo de Entidad", ["Todas", "SAV", "EAF"])
     
     with col2:
-        province = st.selectbox("Provincia", ["Todas"] + sorted(df['direccion_provincia'].dropna().unique()))
+        province = st.selectbox("Provincia", ["Todas"] + sorted(df['atencion_provincia'].dropna().unique()))
     
     with col3:
         capital_range = st.slider(
@@ -688,7 +689,7 @@ elif page == "🔍 Explorador de Entidades":
     
     # Province filter
     if province != "Todas":
-        filtered_df = filtered_df[filtered_df['direccion_provincia'] == province]
+        filtered_df = filtered_df[filtered_df['atencion_provincia'] == province]
     
     # Capital range filter - FIXED to handle NaN values (EAF entities have no capital data)
     filtered_df = filtered_df[
