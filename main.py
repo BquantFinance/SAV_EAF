@@ -379,6 +379,17 @@ st.sidebar.metric("Total Entidades", len(df))
 st.sidebar.metric("Entidades SAV", len(df[df['tipo_entidad'] == 'SAV']))
 st.sidebar.metric("Entidades EAF", len(df[df['tipo_entidad'] == 'EAF']))
 
+# Add most common instruments
+st.sidebar.markdown("### 🎯 Instrumentos Más Comunes")
+common_instruments = {
+    'a': df['instrumentos_activos'].str.contains('a', na=False).sum(),
+    'b': df['instrumentos_activos'].str.contains('b', na=False).sum(),
+    'c': df['instrumentos_activos'].str.contains('c', na=False).sum()
+}
+for code, count in sorted(common_instruments.items(), key=lambda x: x[1], reverse=True):
+    inst_names = {'a': 'Valores negociables', 'b': 'Mercado monetario', 'c': 'Fondos inversión'}
+    st.sidebar.markdown(f"<small style='color: #CBD5E1;'><code style='color: #60A5FA;'>{code}</code> {inst_names[code]}: {count}</small>", unsafe_allow_html=True)
+
 st.sidebar.markdown("---")
 st.sidebar.markdown("**Desarrollado por [@Gsnchez](https://twitter.com/Gsnchez)**")
 st.sidebar.markdown("**[bquantfinance.com](https://bquantfinance.com)**")
@@ -388,15 +399,34 @@ if page == "🏠 Vista General":
     st.title("📊 Dashboard de Sociedades y Agencias de Valores y Empresas de Asesoramiento Financiero")
     st.markdown("### Análisis en Tiempo Real de Entidades Financieras Españolas")
     
-    # Quick explanation box
+    # Quick explanation box with instrument info
     with st.expander("ℹ️ Acerca de este dashboard", expanded=False):
         st.markdown("""
-        Este dashboard analiza **197 entidades financieras reguladas** en España:
-        - **SAV (Sociedades y Agencias de Valores):** 101 entidades
-        - **EAF (Empresas de Asesoramiento Financiero):** 96 entidades
+        <div style='color: #F1F5F9;'>
+        <p>Este dashboard analiza <strong style='color: #60A5FA;'>197 entidades financieras reguladas</strong> en España:</p>
+        <ul style='color: #CBD5E1;'>
+            <li><strong style='color: #60A5FA;'>SAV (Sociedades y Agencias de Valores):</strong> 101 entidades</li>
+            <li><strong style='color: #34D399;'>EAF (Empresas de Asesoramiento Financiero):</strong> 96 entidades</li>
+        </ul>
         
-        Todos los datos son comparables gracias a la estandarización regulatoria (MiFID II y RD 814/2023).
-        """)
+        <p style='margin-top: 1rem;'><strong style='color: #FBBF24;'>Instrumentos Financieros (a-k):</strong></p>
+        <div style='background: #0F172A; padding: 0.5rem; border-radius: 6px; font-size: 12px;'>
+            <code style='color: #60A5FA;'>a:</code> Valores negociables |
+            <code style='color: #60A5FA;'>b:</code> Mercado monetario |
+            <code style='color: #60A5FA;'>c:</code> Fondos inversión |
+            <code style='color: #60A5FA;'>d:</code> Derivados valores |
+            <code style='color: #60A5FA;'>e:</code> Derivados materias primas (efectivo) |
+            <code style='color: #60A5FA;'>f:</code> Derivados materias primas (físico) |
+            <code style='color: #60A5FA;'>g:</code> Otros derivados |
+            <code style='color: #60A5FA;'>h:</code> Derivados crédito |
+            <code style='color: #60A5FA;'>i:</code> CFDs |
+            <code style='color: #60A5FA;'>j:</code> Derivados clima |
+            <code style='color: #60A5FA;'>k:</code> Derechos emisión
+        </div>
+        
+        <p style='margin-top: 1rem; color: #94A3B8;'>Todos los datos son comparables gracias a la estandarización regulatoria (MiFID II y RD 814/2023).</p>
+        </div>
+        """, unsafe_allow_html=True)
     
     # Top metrics
     col1, col2, col3, col4, col5 = st.columns(5)
@@ -650,10 +680,20 @@ elif page == "🔍 Explorador de Entidades":
         view_mode = st.radio("Modo de Vista", ["Tabla", "Tarjetas"], horizontal=True)
     
     if view_mode == "Tabla":
-        # Table view
+        # Table view with instrument codes reference
+        st.markdown("""
+        <div style='background: #1E293B; padding: 0.5rem; border-radius: 6px; margin-bottom: 1rem;'>
+            <span style='color: #FBBF24; font-weight: bold;'>📌 Códigos de Instrumentos:</span>
+            <span style='color: #CBD5E1; font-size: 12px;'>
+            a: Valores negociables | b: Mercado monetario | c: Fondos | d: Derivados valores | e: Derivados materias primas (efectivo) | 
+            f: Derivados materias primas (físico) | g: Otros derivados | h: Derivados crédito | i: CFDs | j: Derivados clima | k: Derechos emisión
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
+        
         display_columns = ['nombre', 'tipo_entidad', 'numero_registro', 'direccion_provincia', 
                           'capital_social', 'num_servicios_inversion', 'num_servicios_auxiliares',
-                          'num_instrumentos', 'fogain']
+                          'num_instrumentos', 'instrumentos_activos', 'fogain']
         
         st.dataframe(
             filtered_df[display_columns].style.format({
@@ -664,6 +704,16 @@ elif page == "🔍 Explorador de Entidades":
         )
     else:
         # Cards view
+        st.markdown("""
+        <div style='background: #1E293B; padding: 0.5rem; border-radius: 6px; margin-bottom: 1rem;'>
+            <span style='color: #FBBF24; font-weight: bold;'>📌 Códigos de Instrumentos:</span>
+            <span style='color: #CBD5E1; font-size: 12px;'>
+            a: Valores negociables | b: Mercado monetario | c: Fondos | d: Derivados valores | e: Derivados materias primas | 
+            f: Derivados físicos | g: Otros derivados | h: Derivados crédito | i: CFDs | j: Derivados clima | k: Derechos emisión
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
+        
         for idx, row in filtered_df.head(20).iterrows():
             with st.expander(f"🏢 {row['nombre']}", expanded=False):
                 col1, col2, col3 = st.columns(3)
@@ -672,16 +722,21 @@ elif page == "🔍 Explorador de Entidades":
                     st.markdown(f"**Tipo:** {row['tipo_entidad']}")
                     st.markdown(f"**Nº Registro:** {row['numero_registro']}")
                     st.markdown(f"**Fecha Registro:** {row['fecha_registro']}")
+                    st.markdown(f"**FOGAIN:** {row['fogain']}")
                 
                 with col2:
                     st.markdown(f"**Capital Social:** €{row['capital_social']}")
                     st.markdown(f"**Provincia:** {row['direccion_provincia']}")
-                    st.markdown(f"**FOGAIN:** {row['fogain']}")
-                
-                with col3:
                     st.markdown(f"**Servicios Inversión:** {row['num_servicios_inversion']}")
                     st.markdown(f"**Servicios Auxiliares:** {row['num_servicios_auxiliares']}")
-                    st.markdown(f"**Instrumentos:** {row['num_instrumentos']}")
+                
+                with col3:
+                    st.markdown(f"**Total Instrumentos:** {row['num_instrumentos']}")
+                    st.markdown(f"**Instrumentos Activos:**")
+                    if pd.notna(row['instrumentos_activos']):
+                        st.markdown(f"<code style='background: #0F172A; color: #60A5FA; padding: 2px 4px; border-radius: 4px;'>{row['instrumentos_activos']}</code>", unsafe_allow_html=True)
+                    else:
+                        st.markdown("*No especificado*")
     
     # Export functionality
     if st.button("📥 Exportar Datos Filtrados"):
@@ -847,25 +902,28 @@ elif page == "📊 Análisis Comparativo":
         # Detailed comparison table with better formatting
         st.markdown("### Comparación Detallada")
         
-        # Add explanation
+        # Add explanation with instrument reference
         st.markdown("""
         <div style='background: linear-gradient(135deg, #1E3A8A 0%, #1E293B 100%); border: 1px solid #3B82F6; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;'>
-            <p style='color: #DBEAFE; margin: 0;'>
-            <strong style='color: #93C5FD;'>💡 Tip:</strong> Los servicios e instrumentos son directamente comparables entre entidades gracias a la 
-            estandarización regulatoria (MiFID II y RD 814/2023).
+            <p style='color: #DBEAFE; margin: 0; margin-bottom: 0.5rem;'>
+            <strong style='color: #93C5FD;'>💡 Tip:</strong> Los servicios e instrumentos son directamente comparables entre entidades.
+            </p>
+            <p style='color: #CBD5E1; margin: 0; font-size: 12px;'>
+            <strong>Instrumentos:</strong> a: Valores | b: Mercado monetario | c: Fondos | d: Derivados valores | e-f: Derivados materias primas | 
+            g: Otros derivados | h: Derivados crédito | i: CFDs | j: Derivados clima | k: Derechos emisión
             </p>
         </div>
         """, unsafe_allow_html=True)
         
         comparison_fields = ['nombre', 'tipo_entidad', 'capital_social', 'direccion_provincia',
                             'num_servicios_inversion', 'num_servicios_auxiliares', 'num_instrumentos',
-                            'fogain', 'num_auditorias', 'tipos_clientes']
+                            'instrumentos_activos', 'fogain', 'num_auditorias', 'tipos_clientes']
         
         comparison_table = compare_df[comparison_fields].T
         comparison_table.columns = [name[:30] + '...' if len(name) > 30 else name for name in entities]
         comparison_table.index = ['Nombre', 'Tipo', 'Capital Social', 'Provincia', 
-                                 'Servicios Inversión', 'Servicios Auxiliares', 'Instrumentos',
-                                 'FOGAIN', 'Auditorías', 'Tipos Cliente']
+                                 'Servicios Inversión', 'Servicios Auxiliares', 'Nº Instrumentos',
+                                 'Instrumentos Activos', 'FOGAIN', 'Auditorías', 'Tipos Cliente']
         
         st.dataframe(comparison_table, use_container_width=True)
         
@@ -894,9 +952,15 @@ elif page == "🗺️ Inteligencia Geográfica":
         color='Capital Total',
         hover_data=['Media Servicios Inversión', 'Presencia Internacional'],
         title="Distribución de Entidades por Provincia",
-        color_continuous_scale='Blues'
+        color_continuous_scale=[[0, '#0F172A'], [0.5, '#60A5FA'], [1, '#93C5FD']]
     )
-    fig_map.update_layout(height=500, paper_bgcolor='white')
+    fig_map.update_layout(
+        height=500,
+        paper_bgcolor='#1E293B',
+        plot_bgcolor='#0F172A',
+        font=dict(color='#F1F5F9', size=12),
+        title_font=dict(size=16, color='#F1F5F9')
+    )
     st.plotly_chart(fig_map, use_container_width=True)
     
     # Province details
@@ -912,10 +976,22 @@ elif page == "🗺️ Inteligencia Geográfica":
             orientation='h',
             title="Top 10 Provincias por Número de Entidades",
             color='Capital Total',
-            color_continuous_scale='Blues',
+            color_continuous_scale=[[0, '#0F172A'], [0.5, '#60A5FA'], [1, '#93C5FD']],
             hover_data=['Capital Total', 'Presencia Internacional']
         )
-        fig_top.update_layout(height=400, paper_bgcolor='white', plot_bgcolor='white')
+        fig_top.update_layout(
+            height=400,
+            paper_bgcolor='#1E293B',
+            plot_bgcolor='#0F172A',
+            font=dict(color='#F1F5F9', size=12),
+            title_font=dict(size=16, color='#F1F5F9'),
+            xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            yaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            coloraxis_colorbar=dict(
+                title_font_color='#CBD5E1',
+                tickfont_color='#CBD5E1'
+            )
+        )
         st.plotly_chart(fig_top, use_container_width=True)
     
     with col2:
@@ -928,10 +1004,22 @@ elif page == "🗺️ Inteligencia Geográfica":
             values='Capital Total',
             names='Provincia',
             title="Distribución de Capital por Provincia (Top 10)",
-            hole=0.4
+            hole=0.4,
+            color_discrete_sequence=['#60A5FA', '#34D399', '#FBBF24', '#F87171', '#93C5FD', '#6EE7B7', '#FDE68A', '#FCA5A5', '#BFDBFE', '#A7F3D0']
         )
-        fig_capital.update_traces(textposition='inside', textinfo='percent+label')
-        fig_capital.update_layout(height=400, paper_bgcolor='white', plot_bgcolor='white')
+        fig_capital.update_traces(
+            textposition='inside',
+            textinfo='percent+label',
+            textfont=dict(color='white')
+        )
+        fig_capital.update_layout(
+            height=400,
+            paper_bgcolor='#1E293B',
+            plot_bgcolor='#1E293B',
+            font=dict(color='#F1F5F9', size=12),
+            title_font=dict(size=16, color='#F1F5F9'),
+            legend=dict(font=dict(color='#CBD5E1'))
+        )
         st.plotly_chart(fig_capital, use_container_width=True)
     
     # International presence
@@ -963,11 +1051,24 @@ elif page == "🗺️ Inteligencia Geográfica":
         title="Presencia Internacional por Tipo de Entidad",
         labels={'x': 'Tipo de Entidad', 'y': 'Porcentaje con Presencia Internacional'},
         color=intl_by_type['percentage'],
-        color_continuous_scale='Blues',
+        color_continuous_scale=[[0, '#0F172A'], [0.5, '#60A5FA'], [1, '#93C5FD']],
         text=intl_by_type['percentage'].round(1)
     )
     fig_intl.update_traces(texttemplate='%{text}%', textposition='outside')
-    fig_intl.update_layout(showlegend=False, height=400, paper_bgcolor='white', plot_bgcolor='white')
+    fig_intl.update_layout(
+        showlegend=False,
+        height=400,
+        paper_bgcolor='#1E293B',
+        plot_bgcolor='#0F172A',
+        font=dict(color='#F1F5F9', size=12),
+        title_font=dict(size=16, color='#F1F5F9'),
+        xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+        yaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+        coloraxis_colorbar=dict(
+            title_font_color='#CBD5E1',
+            tickfont_color='#CBD5E1'
+        )
+    )
     st.plotly_chart(fig_intl, use_container_width=True)
 
 # Page: Services Analysis
@@ -1133,9 +1234,23 @@ elif page == "💼 Análisis de Servicios":
             color='Tipo',
             title="Comparación Promedio SAV vs EAF",
             barmode='group',
-            color_discrete_map={'SAV (promedio)': '#3B82F6', 'EAF (promedio)': '#10B981'}
+            color_discrete_map={'SAV (promedio)': '#60A5FA', 'EAF (promedio)': '#34D399'}
         )
-        fig_comparison.update_layout(height=400, paper_bgcolor='white', plot_bgcolor='white')
+        fig_comparison.update_layout(
+            height=400,
+            paper_bgcolor='#1E293B',
+            plot_bgcolor='#0F172A',
+            font=dict(color='#F1F5F9', size=12),
+            title_font=dict(size=16, color='#F1F5F9'),
+            xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            yaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            legend=dict(
+                font=dict(color='#CBD5E1'),
+                bgcolor='#1E293B',
+                bordercolor='#334155',
+                borderwidth=1
+            )
+        )
         st.plotly_chart(fig_comparison, use_container_width=True)
     
     # Services correlation with better explanation
@@ -1169,25 +1284,137 @@ elif page == "💼 Análisis de Servicios":
     # Instruments analysis with definitions
     st.markdown("### 📈 Cobertura de Instrumentos Financieros")
     
-    # Add instrument definitions expander
-    with st.expander("📚 Ver Definición de Instrumentos Financieros (RD 814/2023)", expanded=False):
-        st.markdown("""
-        **Instrumentos financieros según el artículo 3 del RD 814/2023:**
-        
-        - **a) Valores negociables:** Acciones y valores equiparables
-        - **b) Instrumentos del mercado monetario:** Letras del Tesoro y efectos comerciales
-        - **c) Participaciones en IIC:** Fondos de inversión, capital riesgo, etc.
-        - **d) Derivados sobre valores/divisas:** Opciones, futuros, swaps sobre valores o divisas
-        - **e) Derivados sobre materias primas (liquidación en efectivo)**
-        - **f) Derivados sobre materias primas (entrega física)** negociados en mercados regulados
-        - **g) Otros derivados sobre materias primas** con características de instrumentos financieros
-        - **h) Derivados de crédito:** Para transferencia del riesgo crediticio
-        - **i) CFDs:** Contratos financieros por diferencias
-        - **j) Derivados sobre clima/inflación:** Relacionados con variables climáticas o económicas
-        - **k) Derechos de emisión:** De gases de efecto invernadero
-        """)
+    # Create two columns for instrument reference
+    col_ref1, col_ref2 = st.columns(2)
     
-    # Instrument distribution
+    with col_ref1:
+        # Add comprehensive instrument reference table
+        with st.expander("📚 **Referencia de Instrumentos Financieros (RD 814/2023)**", expanded=True):
+            st.markdown("""
+            <div style='background: #0F172A; padding: 1rem; border-radius: 8px; border: 1px solid #334155;'>
+            <table style='width: 100%; color: #F1F5F9; font-size: 13px;'>
+            <tr style='border-bottom: 2px solid #60A5FA;'>
+                <th style='text-align: left; padding: 8px; color: #60A5FA;'>Código</th>
+                <th style='text-align: left; padding: 8px; color: #60A5FA;'>Instrumento Financiero</th>
+            </tr>
+            <tr style='border-bottom: 1px solid #334155;'>
+                <td style='padding: 8px; color: #FBBF24; font-weight: bold;'>a</td>
+                <td style='padding: 8px;'>Valores negociables (acciones, bonos, obligaciones)</td>
+            </tr>
+            <tr style='border-bottom: 1px solid #334155;'>
+                <td style='padding: 8px; color: #FBBF24; font-weight: bold;'>b</td>
+                <td style='padding: 8px;'>Instrumentos del mercado monetario</td>
+            </tr>
+            <tr style='border-bottom: 1px solid #334155;'>
+                <td style='padding: 8px; color: #FBBF24; font-weight: bold;'>c</td>
+                <td style='padding: 8px;'>Participaciones en IIC (fondos de inversión)</td>
+            </tr>
+            <tr style='border-bottom: 1px solid #334155;'>
+                <td style='padding: 8px; color: #FBBF24; font-weight: bold;'>d</td>
+                <td style='padding: 8px;'>Derivados sobre valores/divisas</td>
+            </tr>
+            <tr style='border-bottom: 1px solid #334155;'>
+                <td style='padding: 8px; color: #FBBF24; font-weight: bold;'>e</td>
+                <td style='padding: 8px;'>Derivados sobre materias primas (efectivo)</td>
+            </tr>
+            <tr style='border-bottom: 1px solid #334155;'>
+                <td style='padding: 8px; color: #FBBF24; font-weight: bold;'>f</td>
+                <td style='padding: 8px;'>Derivados sobre materias primas (físico)</td>
+            </tr>
+            </table>
+            </div>
+            """, unsafe_allow_html=True)
+    
+    with col_ref2:
+        with st.expander("📚 **Continuación - Instrumentos Complejos**", expanded=True):
+            st.markdown("""
+            <div style='background: #0F172A; padding: 1rem; border-radius: 8px; border: 1px solid #334155;'>
+            <table style='width: 100%; color: #F1F5F9; font-size: 13px;'>
+            <tr style='border-bottom: 2px solid #60A5FA;'>
+                <th style='text-align: left; padding: 8px; color: #60A5FA;'>Código</th>
+                <th style='text-align: left; padding: 8px; color: #60A5FA;'>Instrumento Financiero</th>
+            </tr>
+            <tr style='border-bottom: 1px solid #334155;'>
+                <td style='padding: 8px; color: #FBBF24; font-weight: bold;'>g</td>
+                <td style='padding: 8px;'>Otros derivados sobre materias primas</td>
+            </tr>
+            <tr style='border-bottom: 1px solid #334155;'>
+                <td style='padding: 8px; color: #FBBF24; font-weight: bold;'>h</td>
+                <td style='padding: 8px;'>Derivados de transferencia de riesgo de crédito</td>
+            </tr>
+            <tr style='border-bottom: 1px solid #334155;'>
+                <td style='padding: 8px; color: #FBBF24; font-weight: bold;'>i</td>
+                <td style='padding: 8px;'>Contratos financieros por diferencias (CFDs)</td>
+            </tr>
+            <tr style='border-bottom: 1px solid #334155;'>
+                <td style='padding: 8px; color: #FBBF24; font-weight: bold;'>j</td>
+                <td style='padding: 8px;'>Derivados sobre clima/inflación/estadísticas</td>
+            </tr>
+            <tr style='border-bottom: 1px solid #334155;'>
+                <td style='padding: 8px; color: #FBBF24; font-weight: bold;'>k</td>
+                <td style='padding: 8px;'>Derechos de emisión de gases efecto invernadero</td>
+            </tr>
+            </table>
+            </div>
+            """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    # Add analysis of which instruments are most common
+    st.markdown("### 📊 Análisis de Instrumentos Ofrecidos")
+    
+    # Count entities by specific instruments
+    instrument_coverage = {}
+    instruments_map = {
+        'a': 'Valores negociables',
+        'b': 'Mercado monetario', 
+        'c': 'Fondos inversión',
+        'd': 'Derivados valores/divisas',
+        'e': 'Derivados materias primas (efectivo)',
+        'f': 'Derivados materias primas (físico)',
+        'g': 'Otros derivados materias primas',
+        'h': 'Derivados de crédito',
+        'i': 'CFDs',
+        'j': 'Derivados clima/inflación',
+        'k': 'Derechos emisión'
+    }
+    
+    for inst_code, inst_name in instruments_map.items():
+        count = df['instrumentos_activos'].str.contains(inst_code, na=False).sum()
+        instrument_coverage[inst_name] = count
+    
+    # Create bar chart of instrument coverage
+    inst_df = pd.DataFrame(list(instrument_coverage.items()), columns=['Instrumento', 'Entidades'])
+    inst_df = inst_df.sort_values('Entidades', ascending=True)
+    
+    fig_inst_coverage = px.bar(
+        inst_df,
+        x='Entidades',
+        y='Instrumento',
+        orientation='h',
+        title="Número de Entidades por Tipo de Instrumento",
+        color='Entidades',
+        color_continuous_scale=[[0, '#0F172A'], [0.5, '#60A5FA'], [1, '#93C5FD']],
+        text='Entidades'
+    )
+    fig_inst_coverage.update_traces(texttemplate='%{text}', textposition='outside')
+    fig_inst_coverage.update_layout(
+        height=500,
+        paper_bgcolor='#1E293B',
+        plot_bgcolor='#0F172A',
+        font=dict(color='#F1F5F9', size=12),
+        title_font=dict(size=16, color='#F1F5F9'),
+        xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+        yaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+        showlegend=False,
+        coloraxis_colorbar=dict(
+            title_font_color='#CBD5E1',
+            tickfont_color='#CBD5E1'
+        )
+    )
+    st.plotly_chart(fig_inst_coverage, use_container_width=True)
+    
+    # Instrument distribution by ranges
     instrument_ranges = pd.cut(df['num_instrumentos'], bins=[0, 3, 6, 9, 15], 
                                labels=['Básico (1-3)', 'Intermedio (4-6)', 'Avanzado (7-9)', 'Completo (10+)'])
     instrument_dist = instrument_ranges.value_counts()
@@ -1224,17 +1451,27 @@ elif page == "💼 Análisis de Servicios":
         
         fig_inst_type = go.Figure()
         fig_inst_type.add_trace(go.Bar(name='Media', x=inst_by_type['tipo_entidad'], y=inst_by_type['mean'],
-                                       marker_color='#3B82F6'))
+                                       marker_color='#60A5FA'))
         fig_inst_type.add_trace(go.Bar(name='Máximo', x=inst_by_type['tipo_entidad'], y=inst_by_type['max'],
-                                       marker_color='#10B981'))
+                                       marker_color='#34D399'))
         fig_inst_type.update_layout(
             title="Instrumentos por Tipo de Entidad",
             xaxis_title="Tipo de Entidad",
             yaxis_title="Número de Instrumentos",
             barmode='group',
             height=400,
-            paper_bgcolor='white',
-            plot_bgcolor='white'
+            paper_bgcolor='#1E293B',
+            plot_bgcolor='#0F172A',
+            font=dict(color='#F1F5F9', size=12),
+            title_font=dict(size=16, color='#F1F5F9'),
+            xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            yaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            legend=dict(
+                font=dict(color='#CBD5E1'),
+                bgcolor='#1E293B',
+                bordercolor='#334155',
+                borderwidth=1
+            )
         )
         st.plotly_chart(fig_inst_type, use_container_width=True)
     
@@ -1256,20 +1493,28 @@ elif page == "💼 Análisis de Servicios":
             y=['num_servicios_inversion', 'num_servicios_auxiliares'],
             title="Top 10 Entidades por Servicios Totales",
             labels={'value': 'Número de Servicios', 'nombre': 'Entidad'},
-            color_discrete_map={'num_servicios_inversion': '#3B82F6', 'num_servicios_auxiliares': '#10B981'}
+            color_discrete_map={'num_servicios_inversion': '#60A5FA', 'num_servicios_auxiliares': '#34D399'}
         )
         fig_top_services.update_layout(
             height=400,
             xaxis_tickangle=-45,
-            paper_bgcolor='white',
-            plot_bgcolor='white',
+            paper_bgcolor='#1E293B',
+            plot_bgcolor='#0F172A',
+            font=dict(color='#F1F5F9', size=12),
+            title_font=dict(size=16, color='#F1F5F9'),
             legend_title_text='Tipo de Servicio',
+            xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            yaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
             legend=dict(
                 orientation="h",
                 yanchor="bottom",
                 y=1.02,
                 xanchor="right",
-                x=1
+                x=1,
+                font=dict(color='#CBD5E1'),
+                bgcolor='#1E293B',
+                bordercolor='#334155',
+                borderwidth=1
             )
         )
         st.plotly_chart(fig_top_services, use_container_width=True)
@@ -1288,11 +1533,23 @@ elif page == "💼 Análisis de Servicios":
             labels=dict(x="Tipo de Servicio", y="Entidad", color="Cantidad"),
             x=['Servicios Inversión', 'Servicios Auxiliares', 'Instrumentos'],
             y=sample_entities['nombre'],
-            color_continuous_scale='Blues',
+            color_continuous_scale=[[0, '#0F172A'], [0.5, '#60A5FA'], [1, '#93C5FD']],
             text_auto=True,
             aspect="auto"
         )
-        fig_matrix.update_layout(height=600, paper_bgcolor='white', plot_bgcolor='white')
+        fig_matrix.update_layout(
+            height=600,
+            paper_bgcolor='#1E293B',
+            plot_bgcolor='#0F172A',
+            font=dict(color='#F1F5F9', size=12),
+            title_font=dict(size=16, color='#F1F5F9'),
+            xaxis=dict(gridcolor='#334155'),
+            yaxis=dict(gridcolor='#334155'),
+            coloraxis_colorbar=dict(
+                title_font_color='#CBD5E1',
+                tickfont_color='#CBD5E1'
+            )
+        )
         st.plotly_chart(fig_matrix, use_container_width=True)
     
     with tab3:
@@ -1313,11 +1570,24 @@ elif page == "💼 Análisis de Servicios":
             title="Categorización de Entidades por Servicios Ofrecidos",
             labels={'x': 'Categoría de Servicios', 'y': 'Número de Entidades'},
             color=category_counts.values,
-            color_continuous_scale='Blues',
+            color_continuous_scale=[[0, '#0F172A'], [0.5, '#60A5FA'], [1, '#93C5FD']],
             text=category_counts.values
         )
         fig_dist.update_traces(texttemplate='%{text}', textposition='outside')
-        fig_dist.update_layout(showlegend=False, height=400, paper_bgcolor='white', plot_bgcolor='white')
+        fig_dist.update_layout(
+            showlegend=False,
+            height=400,
+            paper_bgcolor='#1E293B',
+            plot_bgcolor='#0F172A',
+            font=dict(color='#F1F5F9', size=12),
+            title_font=dict(size=16, color='#F1F5F9'),
+            xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            yaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            coloraxis_colorbar=dict(
+                title_font_color='#CBD5E1',
+                tickfont_color='#CBD5E1'
+            )
+        )
         st.plotly_chart(fig_dist, use_container_width=True)
 
 # Page: Financial Health
@@ -1506,11 +1776,24 @@ elif page == "💰 Salud Financiera":
             title="Promedio de Auditorías por Tipo de Entidad",
             labels={'x': 'Tipo de Entidad', 'y': 'Promedio de Auditorías'},
             color=audit_by_type['mean'],
-            color_continuous_scale='Blues',
+            color_continuous_scale=[[0, '#0F172A'], [0.5, '#60A5FA'], [1, '#93C5FD']],
             text=audit_by_type['mean'].round(1)
         )
         fig_audit.update_traces(texttemplate='%{text}', textposition='outside')
-        fig_audit.update_layout(showlegend=False, height=400, paper_bgcolor='white', plot_bgcolor='white')
+        fig_audit.update_layout(
+            showlegend=False,
+            height=400,
+            paper_bgcolor='#1E293B',
+            plot_bgcolor='#0F172A',
+            font=dict(color='#F1F5F9', size=12),
+            title_font=dict(size=16, color='#F1F5F9'),
+            xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            yaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            coloraxis_colorbar=dict(
+                title_font_color='#CBD5E1',
+                tickfont_color='#CBD5E1'
+            )
+        )
         st.plotly_chart(fig_audit, use_container_width=True)
     
     with col2:
@@ -1528,9 +1811,22 @@ elif page == "💰 Salud Financiera":
             title="Top 10 Firmas Auditoras",
             labels={'x': 'Número de Entidades Auditadas', 'y': 'Auditor'},
             color=auditor_counts.values,
-            color_continuous_scale='Blues'
+            color_continuous_scale=[[0, '#0F172A'], [0.5, '#60A5FA'], [1, '#93C5FD']]
         )
-        fig_auditors.update_layout(height=400, showlegend=False, paper_bgcolor='white', plot_bgcolor='white')
+        fig_auditors.update_layout(
+            height=400,
+            showlegend=False,
+            paper_bgcolor='#1E293B',
+            plot_bgcolor='#0F172A',
+            font=dict(color='#F1F5F9', size=12),
+            title_font=dict(size=16, color='#F1F5F9'),
+            xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            yaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            coloraxis_colorbar=dict(
+                title_font_color='#CBD5E1',
+                tickfont_color='#CBD5E1'
+            )
+        )
         st.plotly_chart(fig_auditors, use_container_width=True)
 
 # Page: Client Segmentation
@@ -1598,9 +1894,22 @@ elif page == "👥 Segmentación de Clientes":
             title="Combinaciones de Tipos de Cliente",
             labels={'x': 'Número de Entidades', 'y': 'Tipos de Cliente'},
             color=client_combinations.values,
-            color_continuous_scale='Blues'
+            color_continuous_scale=[[0, '#0F172A'], [0.5, '#60A5FA'], [1, '#93C5FD']]
         )
-        fig_combo.update_layout(height=400, showlegend=False, paper_bgcolor='white', plot_bgcolor='white')
+        fig_combo.update_layout(
+            height=400,
+            showlegend=False,
+            paper_bgcolor='#1E293B',
+            plot_bgcolor='#0F172A',
+            font=dict(color='#F1F5F9', size=12),
+            title_font=dict(size=16, color='#F1F5F9'),
+            xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            yaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+            coloraxis_colorbar=dict(
+                title_font_color='#CBD5E1',
+                tickfont_color='#CBD5E1'
+            )
+        )
         st.plotly_chart(fig_combo, use_container_width=True)
     
     # Client segmentation by services - Simplified
@@ -1646,17 +1955,21 @@ elif page == "👥 Segmentación de Clientes":
         z=segment_df[['Media Servicios Inversión', 'Media Servicios Auxiliares', 'Media Instrumentos']].values,
         x=['Servicios Inversión', 'Servicios Auxiliares', 'Instrumentos'],
         y=segment_df['Segmento'],
-        colorscale='Blues',
+        colorscale=[[0, '#0F172A'], [0.5, '#60A5FA'], [1, '#93C5FD']],
         text=segment_df[['Media Servicios Inversión', 'Media Servicios Auxiliares', 'Media Instrumentos']].values.round(2),
         texttemplate='%{text}',
-        textfont={"size": 14},
+        textfont={"size": 14, "color": "white"},
         hoverongaps=False
     ))
     fig_heat.update_layout(
         title="Promedio de Servicios por Segmento de Cliente",
         height=400,
-        paper_bgcolor='white',
-        plot_bgcolor='white'
+        paper_bgcolor='#1E293B',
+        plot_bgcolor='#0F172A',
+        font=dict(color='#F1F5F9', size=12),
+        title_font=dict(size=16, color='#F1F5F9'),
+        xaxis=dict(gridcolor='#334155'),
+        yaxis=dict(gridcolor='#334155')
     )
     st.plotly_chart(fig_heat, use_container_width=True)
     
@@ -1688,11 +2001,24 @@ elif page == "👥 Segmentación de Clientes":
         y='Cantidad',
         title="Distribución de Especialización de Entidades",
         color='Cantidad',
-        color_continuous_scale='Blues',
+        color_continuous_scale=[[0, '#0F172A'], [0.5, '#60A5FA'], [1, '#93C5FD']],
         text='Cantidad'
     )
     fig_spec.update_traces(texttemplate='%{text}', textposition='outside')
-    fig_spec.update_layout(showlegend=False, height=400, paper_bgcolor='white', plot_bgcolor='white')
+    fig_spec.update_layout(
+        showlegend=False,
+        height=400,
+        paper_bgcolor='#1E293B',
+        plot_bgcolor='#0F172A',
+        font=dict(color='#F1F5F9', size=12),
+        title_font=dict(size=16, color='#F1F5F9'),
+        xaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+        yaxis=dict(gridcolor='#334155', zerolinecolor='#334155'),
+        coloraxis_colorbar=dict(
+            title_font_color='#CBD5E1',
+            tickfont_color='#CBD5E1'
+        )
+    )
     st.plotly_chart(fig_spec, use_container_width=True)
     
     # Relationship between capital and client types
