@@ -338,7 +338,6 @@ def load_data():
     
     # Parse capital social to numeric
     df['capital_social_numeric'] = df['capital_social'].str.replace('.', '').str.replace(',', '.').astype(float)
-    df['capital_social_numeric'] = df['capital_social_numeric'].fillna(0)
     
     # Parse dates
     df['fecha_extraccion'] = pd.to_datetime(df['fecha_extraccion'])
